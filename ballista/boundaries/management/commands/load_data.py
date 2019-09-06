@@ -91,8 +91,6 @@ def execute_loading(**kwargs):
 
         mapping = getattr(boundaries.models, mapping_name)
 
-
-
         # shapefile manipulation
         shapefile_zip = shapefile_dir / zip_name
         shapefile_target = shapefile_dir
@@ -119,9 +117,3 @@ def execute_loading(**kwargs):
             print("There was an error at the command level: {0}".format(ex))
 
 
-
-
-
-
-
-    return True
