@@ -7,3 +7,5 @@ django-model-utils
 geopandas
 virtualenv
 virtualenvwrapper
+pathlib
+ipdb

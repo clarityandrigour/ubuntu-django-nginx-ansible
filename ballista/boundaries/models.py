@@ -55,7 +55,8 @@ class CongressionalDistricts(models.Model):
 
 # Auto-generated `LayerMapping` dictionary for CongressionalDistricts model
 congressionaldistricts_mapping = {
-    'statefp': 'STATEFP',
+    'statefp': {'statefp': 'STATEFP'},
+    # 'statefp': 'STATEFP',
     'cd116fp': 'CD116FP',
     'geoid': 'GEOID',
     'namelsad': 'NAMELSAD',
