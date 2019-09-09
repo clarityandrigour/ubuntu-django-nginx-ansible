@@ -14,8 +14,8 @@ dbpassword: "87a10d441346d53d55e788c755c3a598"
 locale: en_US.UTF-8
 tomcat_admin_user: mohanthecat
 tomcat_admin_password: tunasteak
-create_new_project: true
-create_new_static: true
+create_new_project: false
+create_new_static: false
 geoserver_version: "2.15.0"
 hadoop_version: "3.1.1"
 hive_version: "3.1.1"

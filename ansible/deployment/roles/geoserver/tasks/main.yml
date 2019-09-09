@@ -8,7 +8,7 @@
 
 - name: get tomcat packages for geoserver
   apt:
-    name: ['build-essential','unzip', 'tomcat7', 'tomcat7-admin', 'tomcat7-docs', 'tomcat7-admin', 'tomcat7-examples', 'git', 'ant', 'default-jdk']
+    name: ['build-essential','unzip', 'tomcat9', 'tomcat9-admin', 'tomcat9-docs', 'tomcat9-admin', 'tomcat9-examples', 'git', 'ant', 'default-jdk']
     state: latest
     install_recommends: yes
     update_cache: yes
@@ -19,14 +19,14 @@
 - name: create tomcat_users.xml from template
   template:
     src: tomcat_users.xml.j2
-    dest: /etc/tomcat7/tomcat-users.xml
+    dest: /etc/tomcat9/tomcat-users.xml
     owner: root
     group: root
     mode: 0644
   become: true
 
 - name: restart tomcat
-  service: name=tomcat7 state=restarted
+  service: name=tomcat9 state=restarted
   become: true
 
 - name: get the geoserver .war
@@ -42,12 +42,12 @@
 - name: unzip the geoserver .war file into its destination directory
   unarchive:
     src: /vagrant/resources/src/geoserver.war.zip
-    dest: /var/lib/tomcat7/webapps
+    dest: /var/lib/tomcat9/webapps
     remote_src: yes
   become: true
   when: geoserverwarexists
 
 - name: restart tomcat
-  service: name=tomcat7 state=restarted
+  service: name=tomcat9 state=restarted
   become: true
 

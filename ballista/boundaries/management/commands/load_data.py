@@ -30,6 +30,9 @@ class Command(BaseCommand):
         TARGET_APP = 'boundaries'
 
         canonical_models = apps.all_models[TARGET_APP]
+        if models is None:
+            models = canonical_models
+
         cleaned_models = [mdl.lower().strip('_').translate(str.maketrans('', '', string.punctuation)) for mdl in models]
 
         print(canonical_models)
@@ -72,7 +75,8 @@ def get_models_to_run(cleaned_models, canonical_models):
 def execute_loading(**kwargs):
     """Master function"""
 
-    print("Master function")
+    good_models = []
+    bad_models = []
 
     cleaned_models = kwargs['cleaned_models']
     canonical_models=kwargs['canonical_models']
@@ -81,39 +85,49 @@ def execute_loading(**kwargs):
 
     agenda_models = get_models_to_run(cleaned_models=cleaned_models, canonical_models=canonical_models)
 
-    for mdl in agenda_models:
+    try:
+        for mdl in agenda_models:
 
-        short_name = mdl
-        zip_name = short_name + '.zip'
-        shapefile_name = short_name + '.shp'
-        model_class = canonical_models[mdl]
-        mapping_name = short_name + '_mapping'
+            short_name = mdl
+            zip_name = short_name + '.zip'
+            shapefile_name = short_name + '.shp'
+            model_class = canonical_models[mdl]
+            mapping_name = short_name + '_mapping'
 
-        mapping = getattr(boundaries.models, mapping_name)
+            mapping = getattr(boundaries.models, mapping_name)
 
-        # shapefile manipulation
-        shapefile_zip = shapefile_dir / zip_name
-        shapefile_target = shapefile_dir
+            # shapefile manipulation
+            shapefile_zip = shapefile_dir / zip_name
+            shapefile_target = shapefile_dir
 
-        with ZipFile(shapefile_zip, 'r') as zipObj:
-            # Extract all the contents of zip file in current directory
-            zipObj.extractall(path=shapefile_target)
+            with ZipFile(shapefile_zip, 'r') as zipObj:
+                # Extract all the contents of zip file in current directory
+                zipObj.extractall(path=shapefile_target)
 
-        shapefile_shp = str(shapefile_target / short_name / shapefile_name)
+            shapefile_shp = str(shapefile_target / short_name / shapefile_name)
 
-        spatial_data_source = DataSource(shapefile_shp)
+            spatial_data_source = DataSource(shapefile_shp)
 
-        # clear all objects
+            # clear all objects
 
-        while model_class.objects.count() > 0:
-            model_class.objects.all().delete()
+            while model_class.objects.count() > 0:
+                model_class.objects.all().delete()
 
-        try:
             lm = LayerMapping(model_class, spatial_data_source, mapping, transform=True)
-            lm.save(verbose=False, strict=True)
+            lm.save(verbose=True, strict=False)
 
-        except Exception as ex:
+            good_models.append(model_class)
 
-            print("There was an error at the command level: {0}".format(ex))
+    except Exception as ex:
+
+        print("There was an error at the command level: {0}".format(ex))
+        bad_models.append(model_class)
+
+    if len(bad_models) > 0 :
+
+        return False
+
+    else:
+        return True
 
 

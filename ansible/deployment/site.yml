@@ -6,7 +6,7 @@
   roles:
     - common
     - dbserver
-#    - geoserver
+    - geoserver
     - webserver
 #    #- hadoopserver
 #    #- hiveserver
